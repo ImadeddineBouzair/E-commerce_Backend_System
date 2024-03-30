@@ -45,4 +45,4 @@ npm start
 ## Documentation
 
 Each endpoint within this collection is documented with detailed descriptions, request/response schemas, and example use cases to provide a clear understanding of its functionality.
-[Visit documentation][https://documenter.getpostman.com/view/25731393/2sA35G2MN8]
+[Visit documentation](https://documenter.getpostman.com/view/25731393/2sA35G2MN8)
