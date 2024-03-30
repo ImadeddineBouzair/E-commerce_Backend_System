@@ -82,11 +82,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
-  if (!token)
+  if (!token) {
     return next(
       new AppError('You are not logged in, Pleas log in to get access!', 401)
     );
-
+  }
   const decodedToken = await asyncVerify(token);
   const currentUser = await User.findById(decodedToken.id);
 

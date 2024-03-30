@@ -2,46 +2,57 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Name is required!'],
-  },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Name is required!'],
+    },
 
-  email: {
-    type: String,
-    required: [true, 'Email is required!'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Provide a valid email!'],
-  },
+    email: {
+      type: String,
+      required: [true, 'Email is required!'],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Provide a valid email!'],
+    },
 
-  role: {
-    type: String,
-    enum: ['admin', 'supAdmin', 'user'],
-    default: 'user',
-  },
+    role: {
+      type: String,
+      enum: ['admin', 'supAdmin', 'user'],
+      default: 'user',
+    },
 
-  password: {
-    type: String,
-    required: [true, 'Password is required!'],
-    minlength: 8,
-    select: false,
-  },
+    password: {
+      type: String,
+      required: [true, 'Password is required!'],
+      minlength: 8,
+      select: false,
+    },
 
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Password confirm is required!'],
-    validate: {
-      validator: function (val) {
-        return val === this.password;
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Password confirm is required!'],
+      validate: {
+        validator: function (val) {
+          return val === this.password;
+        },
+        message: 'Password confirm is wrong',
       },
-      message: 'Password confirm is wrong',
+    },
+
+    passwordChangedAt: Date,
+
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
     },
   },
-
-  passwordChangedAt: Date,
-});
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
@@ -56,6 +67,13 @@ userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+
+  next();
+});
+
+// Active users
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
 
   next();
 });

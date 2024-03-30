@@ -21,6 +21,20 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getOneProduct = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+
+  if (!product) return next(new AppError('No data found with this ID!', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product,
+    },
+  });
+});
+
 exports.createProduct = catchAsync(async (req, res, next) => {
   const { productName, categorie, price, image } = req.body;
 

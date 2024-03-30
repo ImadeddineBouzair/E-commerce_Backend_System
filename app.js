@@ -37,6 +37,7 @@ app.use(xss());
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/users', userRoutes);
 
+// Unknown routes
 app.use('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
